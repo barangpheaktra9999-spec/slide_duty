@@ -128,12 +128,14 @@ export default function Home() {
         pairIndex = 0; 
       }
 
-      let p1 = pairs[pairIndex].p1;
-      let p2 = pairs[pairIndex].p2;
-      let backup = pairs[pairIndex].backup;
+      // បន្ថែមលក្ខខណ្ឌការពារដើម្បីកុំឱ្យ Error លើ Type Check
+      let p1 = pairs[pairIndex]?.p1 || modifiedList[0];
+      let p2 = pairs[pairIndex]?.p2 || modifiedList[1];
+      let backup = pairs[pairIndex]?.backup || modifiedList[2];
 
       if (leaveDates.includes(dateKey)) {
-        if (p1.id === studentList[pairIndex].p1.id) {
+        const originalPair = pairs[pairIndex];
+        if (originalPair && p1.id === originalPair.p1.id) {
           p1 = backup;
         }
       }
@@ -190,7 +192,6 @@ export default function Home() {
     setNotificationPermission(permission);
   };
 
-  // ✅ មុខងារប្ដូរវេន រួមទាំងបាញ់សារទៅ Telegram
   const handleSwapDuty = () => {
     if (!swapTargetId || !todayDuty) return;
     let currentList = [...STUDENT_LIST];
@@ -217,7 +218,6 @@ export default function Home() {
     }
   };
 
-  // ✅ មុខងារសុំច្បាប់ រួមទាំងបាញ់សារទៅ Telegram
   const handleRequestLeave = () => {
     if (!leaveDate || !todayDuty) return;
     let currentLeaves = [];
@@ -251,7 +251,6 @@ export default function Home() {
     alert('📋 ចម្លងព័ត៌មានរួចរាល់!');
   };
 
-  // ✅ ប្រព័ន្ធគ្រប់គ្រងការបាញ់សារទៅកាន់ Telegram
   const sendTelegramAlert = async (type: string, p1: Student, p2: Student, backup: Student) => {
     const BOT_TOKEN = '8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY';
     const CHAT_ID = '-1003502505377';
@@ -266,7 +265,7 @@ export default function Home() {
     } else if (type === 'swap') {
       text = `🔄 *[សេចក្តីជូនដំណឹងអំពីការដូរវេន]*\n\nមិត្តភក្តិ *${p1.name}* បានដោះដូរភារកិច្ចជាមួយមិត្តភក្តិ *${p2.name}* រួចរាល់នៅលើប្រព័ន្ធ Web! 🙏`;
     } else if (type === 'backup') {
-      text = `⚠️ *[សេចក្តីជូនដំណឹងជូនសមាជិកបម្រុង]*\n\nសូមគោរពអញ្ជើញមិត្តភក្តិវេនបម្រុងទុក៖\n👤 *${backup.name}* (${mB})\n\nមេត្តាជួយទៅរៀបចំឧបករណ៍ស្លាយជំនួសក្នុងថ្នាក់រៀនបន្តិចបាទ។ សូមអរគុណច្រើន! 🙏⚡`;
+      text = `⚠️ *[សេចក្តីជូនដំណឹងជូនសមាជិកបម្រុង]*\n\nសូមគោរពអញ្ជើញមិត្តភក្តិវេនបម្រុងទុក៖\n👤 *${backup.name}* (${mB})\n\nមេត្តាជួយទៅរៀបចំឧបករណ៍ស្លាយជំនួសក្នុងថ្នាក់រៀនបន្តិចបាទ My-Friend។ សូមអរគុណច្រើន! 🙏⚡`;
     } else if (type === 'done') {
       text = `✅ *[របាយការណ៍បញ្ចប់ភារកិច្ច]*\n\nឧបករណ៍ស្លាយត្រូវបានរៀបចំ និងដំឡើងដោយមិត្តភក្តិ *${p1.name}* និង *${p2.name}* រួចរាល់ជាស្ថាពរហើយ។ អរគុណមិត្តភក្តិទាំងពីរខ្លាំងណាស់! 🎓🚀`;
     } else if (type === 'leave') {
@@ -281,7 +280,7 @@ export default function Home() {
       });
       alert('🚀 ផ្ញើសារទៅកាន់គ្រុប Telegram រួចរាល់!');
     } catch (err) {
-      alert('❌ 有问题系统!');
+      alert('❌ មានបញ្ហាប្រព័ន្ធ!');
     }
   };
 
@@ -301,7 +300,9 @@ export default function Home() {
             <img 
               src="https://upload.wikimedia.org/wikipedia/km/e/ee/Rupp_logo.png" 
               alt="RUPP LOGO LOADING" 
-              className="w-24 h-24 rounded-full p-2 bg-white object-contain shadow-2xl shadow-purple-500/20"
+              width={96}
+              height={96}
+              className="rounded-full p-2 bg-white object-contain shadow-2xl shadow-purple-500/20"
             />
           </div>
           <p className="text-xs text-purple-400 font-bold tracking-widest mt-6 animate-pulse uppercase">ITE A3 • System Booting...</p>
@@ -318,7 +319,7 @@ export default function Home() {
         <div className="bg-[#0b0f19]/80 backdrop-blur-xl border-b border-white/[0.04] sticky top-0 z-50 py-3.5 shadow-xl">
           <div className="max-w-md mx-auto px-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <img src="https://upload.wikimedia.org/wikipedia/km/e/ee/Rupp_logo.png" alt="RUPP" className="w-8 h-8 rounded-full border border-white/20 p-0.5 bg-white shadow-md" />
+              <img src="https://upload.wikimedia.org/wikipedia/km/e/ee/Rupp_logo.png" alt="RUPP" width={32} height={32} className="rounded-full border border-white/20 p-0.5 bg-white shadow-md" />
               <div>
                 <h1 className="text-xs font-black tracking-widest text-slate-100 uppercase">ITE A3 • SLIDE PORTAL</h1>
                 <p className="text-[10px] text-emerald-400 font-medium mt-0.5">{currentDateText}</p>
