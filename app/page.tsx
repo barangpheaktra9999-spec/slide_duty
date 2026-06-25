@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-// បញ្ជីឈ្មោះនិស្សិត ITE A3
+// បញ្ជីឈ្មោះនិស្សិត ITE A3 (មានការកែតម្រូវលេខរៀងទី ៧ ជា ប៉ាន ជតពិសិដ្ឋ ត្រឹមត្រូវ)
 const STUDENT_LIST = [
   { id: 37, name: "ភួងផល សំណាង", telegram_username: "phuongphol_samnang" },
   { id: 38, name: "ម៉ក់ លីឈុន", telegram_username: "mok_lychhun" },
@@ -12,12 +12,11 @@ const STUDENT_LIST = [
   { id: 4, name: "ទុយ សាមាស", telegram_username: "touy_samash" },
   { id: 5, name: "ទុយ សុខលាភ", telegram_username: "touy_sokleap" },
   { id: 6, name: "ទ្រី សេរីវិជ្ជា", telegram_username: "try_sereyvichea" },
-  { id: 7, name: "នន សុធារិទ្ធិ", telegram_username: "non_sothearith" },
+  { id: 7, name: "ប៉ាន ជតពិសិដ្ឋ", telegram_username: "pan_chotpiseth" }, // អាប់ដេតឈ្មោះទី ៧ តាមការណែនាំ
   { id: 8, name: "នាង អេនហ្គេល", telegram_username: "neang_engle" },
   { id: 9, name: "នុត ចំរើន", telegram_username: "nut_chamroeun" },
   { id: 10, name: "នូ ជាសំណាង", telegram_username: "nou_cheasamnang" },
   { id: 11, name: "នួន សំណាងតារា", telegram_username: "nuon_samnangdara" },
-  { id: 12, name: "ប៉ាន ជតពិសិដ្ឋ", telegram_username: "pan_chotpiseth" },
   { id: 13, name: "ប៉ែន សំណាង", telegram_username: "pen_samnang" },
   { id: 14, name: "ប៊ី ជុងសេង", telegram_username: "by_chongseng" },
   { id: 15, name: "ប៊ុណ្ណា ដាវីដ", telegram_username: "bunna_david" },
@@ -78,7 +77,7 @@ export default function Home() {
   const [leaveDate, setLeaveDate] = useState('');
   const [showLeaveModal, setShowLeaveModal] = useState(false);
 
-  // Logic បង្ហាញកាលវិភាគ
+  // ✅ ប្រព័ន្ធគ្រប់គ្រង Logic កាលវិភាគការពារការជាន់ឈ្មោះគ្នាដាច់ខាត
   const generateSchedule = (studentList: Student[]) => {
     if (studentList.length === 0) return [];
     
@@ -86,15 +85,6 @@ export default function Home() {
     if (typeof window !== 'undefined') {
       const savedSwaps = localStorage.getItem('ite_a3_swapped_list');
       if (savedSwaps) modifiedList = JSON.parse(savedSwaps);
-    }
-
-    const pairs: { p1: Student; p2: Student; backup: Student }[] = [];
-    for (let i = 0; i < modifiedList.length; i += 2) {
-      pairs.push({
-        p1: modifiedList[i],
-        p2: modifiedList[i + 1] || modifiedList[0],
-        backup: modifiedList[(i + 2) % modifiedList.length]
-      });
     }
 
     const today = new Date();
@@ -112,6 +102,8 @@ export default function Home() {
     }
 
     const fullSchedule: DutyPair[] = [];
+    const len = modifiedList.length;
+
     for (let d = 0; d < 20; d++) {
       const targetDate = new Date(startOfWeek);
       targetDate.setDate(startOfWeek.getDate() + (Math.floor(d / 5) * 7) + (d % 5));
@@ -123,21 +115,21 @@ export default function Home() {
 
       const isTodayItem = targetDate.getTime() === today.getTime();
       
-      let pairIndex = d % pairs.length;
-      if (isTodayItem) {
-        pairIndex = 0; 
-      }
+      // គណនា Index បែបវិលជុំដោយផ្អែកលើថ្ងៃនីមួយៗ ការពារកុំឱ្យជាន់គ្នា
+      const baseIdx = (d * 2) % len;
+      let p1Idx = baseIdx;
+      let p2Idx = (baseIdx + 1) % len;
+      let backupIdx = (baseIdx + 2) % len;
 
-      // បន្ថែមលក្ខខណ្ឌការពារដើម្បីកុំឱ្យ Error លើ Type Check
-      let p1 = pairs[pairIndex]?.p1 || modifiedList[0];
-      let p2 = pairs[pairIndex]?.p2 || modifiedList[1];
-      let backup = pairs[pairIndex]?.backup || modifiedList[2];
+      let p1 = modifiedList[p1Idx];
+      let p2 = modifiedList[p2Idx];
+      let backup = modifiedList[backupIdx];
 
+      // ករណីមានអ្នកសុំច្បាប់ ផ្ទេរភារកិច្ចឱ្យអ្នកបន្ទាប់ភ្លាមៗដោយមិនឱ្យជាន់គ្នា
       if (leaveDates.includes(dateKey)) {
-        const originalPair = pairs[pairIndex];
-        if (originalPair && p1.id === originalPair.p1.id) {
-          p1 = backup;
-        }
+        p1 = modifiedList[backupIdx];
+        p2 = modifiedList[(backupIdx + 1) % len];
+        backup = modifiedList[(backupIdx + 2) % len];
       }
 
       fullSchedule.push({
@@ -156,7 +148,7 @@ export default function Home() {
     
     const loadingTimer = setTimeout(() => {
       setIsLoading(false);
-    }, 2500);
+    }, 2000);
 
     if (typeof window !== 'undefined' && 'Notification' in window) {
       setNotificationPermission(Notification.permission);
@@ -265,7 +257,7 @@ export default function Home() {
     } else if (type === 'swap') {
       text = `🔄 *[សេចក្តីជូនដំណឹងអំពីការដូរវេន]*\n\nមិត្តភក្តិ *${p1.name}* បានដោះដូរភារកិច្ចជាមួយមិត្តភក្តិ *${p2.name}* រួចរាល់នៅលើប្រព័ន្ធ Web! 🙏`;
     } else if (type === 'backup') {
-      text = `⚠️ *[សេចក្តីជូនដំណឹងជូនសមាជិកបម្រុង]*\n\nសូមគោរពអញ្ជើញមិត្តភក្តិវេនបម្រុងទុក៖\n👤 *${backup.name}* (${mB})\n\nមេត្តាជួយទៅរៀបចំឧបករណ៍ស្លាយជំនួសក្នុងថ្នាក់រៀនបន្តិចបាទ My-Friend។ សូមអរគុណច្រើន! 🙏⚡`;
+      text = `⚠️ *[សេចក្តីជូនដំណឹងជូនសមាជិកបម្រុង]*\n\nសូមគោរពអញ្ជើញមិត្តភក្តិវេនបម្រុងទុក៖\n👤 *${backup.name}* (${mB})\n\nមេត្តាជួយទៅរៀបចំឧបករណ៍ស្លាយជំនួសក្នុងថ្នាក់រៀនបន្តិចបាទ។ សូមអរគុណច្រើន! 🙏⚡`;
     } else if (type === 'done') {
       text = `✅ *[របាយការណ៍បញ្ចប់ភារកិច្ច]*\n\nឧបករណ៍ស្លាយត្រូវបានរៀបចំ និងដំឡើងដោយមិត្តភក្តិ *${p1.name}* និង *${p2.name}* រួចរាល់ជាស្ថាពរហើយ។ អរគុណមិត្តភក្តិទាំងពីរខ្លាំងណាស់! 🎓🚀`;
     } else if (type === 'leave') {
