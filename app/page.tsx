@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-// បានរៀបចំឱ្យឈ្មោះ "ភួងផល សំណាង" និង "ម៉ក់ លីឈុន" ស្ថិតនៅលេខរៀងទី ១ និងទី ២ ក្នុង Array
+// បញ្ជីឈ្មោះនិស្សិត ITE A3
 const STUDENT_LIST = [
   { id: 37, name: "ភួងផល សំណាង", telegram_username: "phuongphol_samnang" },
   { id: 38, name: "ម៉ក់ លីឈុន", telegram_username: "mok_lychhun" },
@@ -78,7 +78,7 @@ export default function Home() {
   const [leaveDate, setLeaveDate] = useState('');
   const [showLeaveModal, setShowLeaveModal] = useState(false);
 
-  // Logic កែសម្រួល៖ បង្ខំឱ្យថ្ងៃនេះ (Today) ចាប់យកគូដំបូងគេជានិច្ចដើម្បីបង្ហាញសាកល្បង
+  // Logic បង្ហាញកាលវិភាគ
   const generateSchedule = (studentList: Student[]) => {
     if (studentList.length === 0) return [];
     
@@ -123,7 +123,6 @@ export default function Home() {
 
       const isTodayItem = targetDate.getTime() === today.getTime();
       
-      // ប្រសិនបើជាថ្ងៃនេះ (Today) គឺប្រព័ន្ធនឹងកំណត់យកគូរបស់ "ភួងផល សំណាង" និង "ម៉ក់ លីឈុន" (គូទី 0) មកបង្ហាញភ្លាមៗ
       let pairIndex = d % pairs.length;
       if (isTodayItem) {
         pairIndex = 0; 
@@ -191,6 +190,7 @@ export default function Home() {
     setNotificationPermission(permission);
   };
 
+  // ✅ មុខងារប្ដូរវេន រួមទាំងបាញ់សារទៅ Telegram
   const handleSwapDuty = () => {
     if (!swapTargetId || !todayDuty) return;
     let currentList = [...STUDENT_LIST];
@@ -201,18 +201,25 @@ export default function Home() {
     const idx2 = currentList.findIndex(s => s.id === Number(swapTargetId));
 
     if (idx1 !== -1 && idx2 !== -1) {
+      const targetStudent = currentList[idx2]; 
+      
       const temp = currentList[idx1];
       currentList[idx1] = currentList[idx2];
       currentList[idx2] = temp;
+      
       localStorage.setItem('ite_a3_swapped_list', JSON.stringify(currentList));
       setSchedule(generateSchedule(STUDENT_LIST));
-      sendTelegramAlert('swap', todayDuty.p1, currentList[idx1], todayDuty.backup);
+      
+      sendTelegramAlert('swap', todayDuty.p1, targetStudent, todayDuty.backup);
+      
       setShowSwapModal(false);
+      setSwapTargetId('');
     }
   };
 
+  // ✅ មុខងារសុំច្បាប់ រួមទាំងបាញ់សារទៅ Telegram
   const handleRequestLeave = () => {
-    if (!leaveDate) return;
+    if (!leaveDate || !todayDuty) return;
     let currentLeaves = [];
     const savedLeaves = localStorage.getItem('ite_a3_leave_dates');
     if (savedLeaves) currentLeaves = JSON.parse(savedLeaves);
@@ -221,8 +228,11 @@ export default function Home() {
       currentLeaves.push(leaveDate);
       localStorage.setItem('ite_a3_leave_dates', JSON.stringify(currentLeaves));
       setSchedule(generateSchedule(STUDENT_LIST));
-      alert('📅 បានដាក់ពាក្យសុំច្បាប់ និងរុញវេន Backup ជំនួសរួចរាល់!');
+      
+      sendTelegramAlert('leave', todayDuty.p1, todayDuty.p2, todayDuty.backup);
+      
       setShowLeaveModal(false);
+      setLeaveDate('');
     }
   };
 
@@ -241,6 +251,7 @@ export default function Home() {
     alert('📋 ចម្លងព័ត៌មានរួចរាល់!');
   };
 
+  // ✅ ប្រព័ន្ធគ្រប់គ្រងការបាញ់សារទៅកាន់ Telegram
   const sendTelegramAlert = async (type: string, p1: Student, p2: Student, backup: Student) => {
     const BOT_TOKEN = '8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY';
     const CHAT_ID = '-1003502505377';
@@ -253,11 +264,13 @@ export default function Home() {
     if (type === 'remind') {
       text = `📢 *[សេចក្តីរំលឹកអំពីកាតព្វកិច្ចយកស្លាយ]*\n\nសូមជម្រាបជូនមិត្តភក្តិដែលដល់វេន៖\n1. *${p1.name}* (${m1})\n2. *${p2.name}* (${m2})\n\nសូមមេត្តាជួយទៅយកឧបករណ៍ស្លាយដំឡើងក្នុងថ្នាក់ឱ្យបានមុនម៉ោង *12:30 PM*។ សូមអរគុណសម្រាប់កិច្ចសហការ! 🙏✨`;
     } else if (type === 'swap') {
-      text = `🔄 *[សេចក្តីជូនដំណឹងអំពីការដូរវេន]*\n\nមិត្តភក្តិ *${p1.name}* បានដោះដូរវេនភារកិច្ចជាមួយមិត្តភក្តិ *${p2.name}* រួចរាល់នៅលើប្រព័ន្ធ Web! 🙏`;
+      text = `🔄 *[សេចក្តីជូនដំណឹងអំពីការដូរវេន]*\n\nមិត្តភក្តិ *${p1.name}* បានដោះដូរភារកិច្ចជាមួយមិត្តភក្តិ *${p2.name}* រួចរាល់នៅលើប្រព័ន្ធ Web! 🙏`;
     } else if (type === 'backup') {
       text = `⚠️ *[សេចក្តីជូនដំណឹងជូនសមាជិកបម្រុង]*\n\nសូមគោរពអញ្ជើញមិត្តភក្តិវេនបម្រុងទុក៖\n👤 *${backup.name}* (${mB})\n\nមេត្តាជួយទៅរៀបចំឧបករណ៍ស្លាយជំនួសក្នុងថ្នាក់រៀនបន្តិចបាទ។ សូមអរគុណច្រើន! 🙏⚡`;
     } else if (type === 'done') {
       text = `✅ *[របាយការណ៍បញ្ចប់ភារកិច្ច]*\n\nឧបករណ៍ស្លាយត្រូវបានរៀបចំ និងដំឡើងដោយមិត្តភក្តិ *${p1.name}* និង *${p2.name}* រួចរាល់ជាស្ថាពរហើយ។ អរគុណមិត្តភក្តិទាំងពីរខ្លាំងណាស់! 🎓🚀`;
+    } else if (type === 'leave') {
+      text = `📅 *[សេចក្តីជូនដំណឹងអំពីការសុំច្បាប់]*\n\nមិត្តភក្តិ *${p1.name}* បានដាក់ពាក្យសុំច្បាប់សម្រាក/រវល់។\n\nដូច្នេះភារកិច្ចចម្បងនឹងត្រូវផ្ទេរជូនសមាជិកបម្រុង (Backup) ស្វ័យប្រវត្ត៖\n👤 *${backup.name}* (${mB}) សូមមេត្តាជួយរៀបចំជំនួសក្នុងថ្នាក់។ អរគុណច្រើន! 🙏`;
     }
 
     try {
@@ -268,7 +281,7 @@ export default function Home() {
       });
       alert('🚀 ផ្ញើសារទៅកាន់គ្រុប Telegram រួចរាល់!');
     } catch (err) {
-      alert('❌ មានបញ្ហាប្រព័ន្ធ!');
+      alert('❌ 有问题系统!');
     }
   };
 
@@ -279,7 +292,6 @@ export default function Home() {
 
   return (
     <>
-
       {/* RUPP LOGO NEON LOADING SCREEN */}
       {isLoading && (
         <div className="fixed inset-0 bg-[#02050c] z-[9999] flex flex-col items-center justify-center transition-all duration-500">
