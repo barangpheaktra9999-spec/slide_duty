@@ -279,13 +279,6 @@ export default function Home() {
 
   return (
     <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-      <style jsx global>{`
-        body { font-family: 'Kantumruy Pro', sans-serif !important; background-color: #030712; }
-      `}</style>
 
       {/* RUPP LOGO NEON LOADING SCREEN */}
       {isLoading && (

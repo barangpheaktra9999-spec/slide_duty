@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Kantumruy Pro', sans-serif !important;
+  background-color: #030712;
+}
 @import "tailwindcss";
 
 :root {
