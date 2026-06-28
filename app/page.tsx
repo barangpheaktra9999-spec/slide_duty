@@ -21,7 +21,7 @@ const STUDENT_LIST = [
   { id: 11, name: "នួន សំណាងតារា", telegram_username: "nuon_samnangdara" },
   { id: 13, name: "ប៉ែន សំណាង", telegram_username: "pen_samnang" },
   { id: 14, name: "ប៊ី ជុងសេង", telegram_username: "by_chongseng" },
-  { id: 15, name: "ប៊ុណ្ណា ដាវីដ", telegram_username: "bunna_david" },
+  { id: 15, name: "ប៊ុណ្ណា ដាវីដ", telegram_username: "bunna_david"},
   { id: 16, name: "ប៊ូ ហង្សបូរី", telegram_username: "bou_hangborey" },
   { id: 17, name: "ប៊ួរ សុវណ្ណសិលា", telegram_username: "bour_sovannsela" },
   { id: 18, name: "ប៊េ សុងហ័រ", telegram_username: "be_songhor" },
@@ -51,7 +51,7 @@ const STUDENT_LIST = [
 // ២. បែងចែកគូទាំង ២០ រាប់ត្រឡប់ពីក្រោយមកមុខ (Fixed Array Structure)
 // ==========================================
 const DUTY_PAIRS = [
-  { pairId: 1, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[7], p2: STUDENT_LIST[8] },
+  { pairId: 1, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[1], p2: STUDENT_LIST[8] },
   { pairId: 2, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[9], p2: STUDENT_LIST[10] },
   { pairId: 3, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[11], p2: STUDENT_LIST[12] },
   { pairId: 4, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[13], p2: STUDENT_LIST[14] },
@@ -68,7 +68,7 @@ const DUTY_PAIRS = [
   { pairId: 15, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[35], p2: STUDENT_LIST[36] },
   { pairId: 16, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[37], p2: STUDENT_LIST[38] }, 
   { pairId: 17, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[39], p2: STUDENT_LIST[40] }, 
-  { pairId: 18, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[1], p2: STUDENT_LIST[2] }, 
+  { pairId: 18, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[7], p2: STUDENT_LIST[2] }, 
   { pairId: 19, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[3], p2: STUDENT_LIST[4] }, 
   { pairId: 20, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[5], p2: STUDENT_LIST[6] }
 ];
