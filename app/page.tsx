@@ -51,26 +51,26 @@ const STUDENT_LIST = [
 // ២. បែងចែកគូទាំង ២០ រាប់ត្រឡប់ពីក្រោយមកមុខ (Fixed Array Structure)
 // ==========================================
 const DUTY_PAIRS = [
-  { pairId: 1, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[38], p2: STUDENT_LIST[37] },
-  { pairId: 2, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[36], p2: STUDENT_LIST[35] },
-  { pairId: 3, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[34], p2: STUDENT_LIST[33] },
-  { pairId: 4, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[32], p2: STUDENT_LIST[31] },
-  { pairId: 5, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[30], p2: STUDENT_LIST[29] },
-  { pairId: 6, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[28], p2: STUDENT_LIST[27] },
-  { pairId: 7, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[26], p2: STUDENT_LIST[25] },
-  { pairId: 8, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[24], p2: STUDENT_LIST[23] },
-  { pairId: 9, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[22], p2: STUDENT_LIST[21] },
-  { pairId: 10, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[20], p2: STUDENT_LIST[19] },
-  { pairId: 11, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[18], p2: STUDENT_LIST[17] },
-  { pairId: 12, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[16], p2: STUDENT_LIST[15] },
-  { pairId: 13, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[14], p2: STUDENT_LIST[13] },
-  { pairId: 14, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[11], p2: STUDENT_LIST[10] },
-  { pairId: 15, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[10], p2: STUDENT_LIST[9] },
-  { pairId: 16, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[9], p2: STUDENT_LIST[8] }, 
-  { pairId: 17, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[7], p2: STUDENT_LIST[6] }, 
-  { pairId: 18, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[5], p2: STUDENT_LIST[4] }, 
-  { pairId: 19, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[3], p2: STUDENT_LIST[2] }, 
-  { pairId: 20, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[1], p2: STUDENT_LIST[0] }
+  { pairId: 1, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[7], p2: STUDENT_LIST[8] },
+  { pairId: 2, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[9], p2: STUDENT_LIST[10] },
+  { pairId: 3, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[11], p2: STUDENT_LIST[12] },
+  { pairId: 4, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[13], p2: STUDENT_LIST[14] },
+  { pairId: 5, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[15], p2: STUDENT_LIST[16] },
+  { pairId: 6, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[17], p2: STUDENT_LIST[18] },
+  { pairId: 7, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[19], p2: STUDENT_LIST[20] },
+  { pairId: 8, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[21], p2: STUDENT_LIST[22] },
+  { pairId: 9, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[23], p2: STUDENT_LIST[24] },
+  { pairId: 10, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[25], p2: STUDENT_LIST[26] },
+  { pairId: 11, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[27], p2: STUDENT_LIST[28] },
+  { pairId: 12, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[29], p2: STUDENT_LIST[30] },
+  { pairId: 13, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[31], p2: STUDENT_LIST[32] },
+  { pairId: 14, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[33], p2: STUDENT_LIST[34] },
+  { pairId: 15, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[35], p2: STUDENT_LIST[36] },
+  { pairId: 16, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[37], p2: STUDENT_LIST[38] }, 
+  { pairId: 17, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[39], p2: STUDENT_LIST[40] }, 
+  { pairId: 18, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[1], p2: STUDENT_LIST[2] }, 
+  { pairId: 19, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[3], p2: STUDENT_LIST[4] }, 
+  { pairId: 20, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[5], p2: STUDENT_LIST[6] }
 ];
 
 export default function Home() {
