@@ -194,35 +194,47 @@ export default function Home() {
     }
   }, [searchQuery]);
 
-  const handleRequestSwap = async () => {
-    if (!targetPairId || !swappingStudent) return;
-    setSwapLoading(true);
+const handleRequestSwap = async () => {
+  if (!targetPairId || !swappingStudent) return;
+  setSwapLoading(true);
 
-    const selectedPair = DUTY_PAIRS.find(p => p.pairId === parseInt(targetPairId));
-    if (!selectedPair) return;
+  const selectedPair = DUTY_PAIRS.find(p => p.pairId === parseInt(targetPairId));
+  if (!selectedPair) return;
 
-    try {
-      const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
-      const CHAT_ID = "-1003502505377"; 
+  try {
+    const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
+    const CHAT_ID = "-1003502505377"; 
 
-      const message = `🔄 *សេចក្តីជូនដំណឹង៖ ការសុំប្តូរវេនគ្នា* 🔄\n\n📢 និស្សិតឈ្មោះ *${swappingStudent.name}* (@${swappingStudent.telegram_username}) ដែលត្រូវវេននៅថ្ងៃ *${swappingStudent.dutyDay}* មានធុរៈរវល់ ហើយបានស្នើសុំដូរវេនយកស្លាយមេរៀនជាមួយ៖\n\n🤝 *ក្រុមគោលដៅ:* \n១. ${selectedPair.p1.name}\n២. ${selectedPair.p2.name}\n(ត្រូវវេនធម្មតានៅ៖ *${selectedPair.dayName}*)\n\n👉 សូមក្រុមទាំងពីរទាក់ទងគ្នាដើម្បីសម្របសម្រួល និងទៅយកស្លាយជំនួសគ្នាផងបាទ! (កាលវិភាគក្នុងប្រព័ន្ធ Array រក្សាដដែល)`;
+    const message = `🔄 *សេចក្តីជូនដំណឹង៖ ការសុំប្តូរវេនគ្នា* 🔄\n\n📢 និស្សិតឈ្មោះ *${swappingStudent.name}* (@${swappingStudent.telegram_username}) ដែលត្រូវវេននៅថ្ងៃ *${swappingStudent.dutyDay}* មានធុរៈរវល់ ហើយបានស្នើសុំដូរវេនយកស្លាយមេរៀនជាមួយ៖\n\n🤝 *ក្រុមគោលដៅ:* \n១. ${selectedPair.p1.name}\n២. ${selectedPair.p2.name}\n(ត្រូវវេនធម្មតានៅ៖ *${selectedPair.dayName}*)\n\n👉 សូមក្រុមទាំងពីរទាក់ទងគ្នាដើម្បីសម្របសម្រួល និងទៅយកស្លាយជំនួសគ្នាផងបាទ!`;
 
-      const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-      await fetch(telegramUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' }),
-      });
+    const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    
+    const response = await fetch(telegramUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        chat_id: CHAT_ID, 
+        text: message, 
+        parse_mode: 'Markdown' 
+      }),
+    });
 
-      alert("🚀 បានផ្ញើសារសុំដូរវេនទៅកាន់គ្រុប Telegram រួចរាល់ហើយ!");
-      setShowSwapModal(false);
-    } catch (error) {
-      console.error(error);
-      alert("មានបញ្ហា មិនអាចផ្ញើសារបានទេ!");
-    } finally {
-      setSwapLoading(false);
+    const data = await response.json();
+
+    if (!data.ok) {
+      // នេះនឹងប្រាប់អ្នកថាហេតុអ្វីបានជាវាផ្ញើមិនចេញ (ដូចជា bot not found ឬ invalid chat id)
+      throw new Error(data.description);
     }
-  };
+
+    alert("🚀 បានផ្ញើសារសុំដូរវេនទៅកាន់គ្រុប Telegram រួចរាល់ហើយ!");
+    setShowSwapModal(false);
+  } catch (error) {
+    console.error("Telegram Error:", error);
+    alert("មានបញ្ហា៖ " + error);
+  } finally {
+    setSwapLoading(false);
+  }
+};
 
   const handleCheckIn = async () => {
     if (!todayDuty) return;
