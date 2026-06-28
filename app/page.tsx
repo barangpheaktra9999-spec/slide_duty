@@ -164,40 +164,36 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [isWeekend]);
 
-  useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setFilteredStudents([]);
-    } else {
-      const query = searchQuery.toLowerCase();
+useEffect(() => {
+  if (searchQuery.trim() === '') {
+    setFilteredStudents([]);
+  } else {
+    const query = searchQuery.toLowerCase();
+    
+    // ប្រើការត្រួតពិនិត្យសុវត្ថិភាព (Optional Chaining) ដើម្បីការពារ Error
+    const results = STUDENT_LIST.filter(student =>
+      student?.name?.toLowerCase().includes(query) ||
+      student?.id?.toString().includes(query) ||
+      (student?.telegram_username && student.telegram_username.toLowerCase().includes(query))
+    ).map(student => {
+      // ស្វែងរកគូដែលត្រូវនឹង ID របស់និស្សិត
+      const dutySchedule = DUTY_PAIRS.find(pair => 
+        pair?.p1?.id === student.id || pair?.p2?.id === student.id
+      );
       
-      const results = STUDENT_LIST.filter(student =>
-        student.name.toLowerCase().includes(query) ||
-        student.id.toString().includes(query) ||
-        student.telegram_username.toLowerCase().includes(query)
-      ).map(student => {
-        const dutySchedule = DUTY_PAIRS.find(pair => pair.p1.id === student.id || pair.p2.id === student.id);
-        
-        let scheduleInfo = "មានឈ្មោះក្នុងប្រព័ន្ធ";
-        let partnerName = "គ្មានដៃគូ";
-        let currentPairId = null;
+      return {
+        ...student,
+        dutyDay: dutySchedule?.dayName || "គ្មានវេន",
+        partner: dutySchedule 
+          ? (dutySchedule.p1?.id === student.id ? dutySchedule.p2?.name : dutySchedule.p1?.name)
+          : "គ្មានដៃគូ",
+        pairId: dutySchedule?.pairId || null
+      };
+    });
 
-        if (dutySchedule) {
-          scheduleInfo = dutySchedule.dayName;
-          partnerName = dutySchedule.p1.id === student.id ? dutySchedule.p2.name : dutySchedule.p1.name;
-          currentPairId = dutySchedule.pairId;
-        }
-
-        return {
-          ...student,
-          dutyDay: scheduleInfo,
-          partner: partnerName,
-          pairId: currentPairId
-        };
-      });
-
-      setFilteredStudents(results);
-    }
-  }, [searchQuery]);
+    setFilteredStudents(results);
+  }
+}, [searchQuery, STUDENT_LIST]); // បន្ថែម STUDENT_LIST ជា dependency ដើម្បីសុវត្ថិភាព
 
 const handleRequestSwap = async () => {
   if (!targetPairId || !swappingStudent) return;
