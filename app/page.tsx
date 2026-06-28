@@ -14,7 +14,7 @@ const STUDENT_LIST = [
   { id: 4, name: "ទុយ សាមាស", telegram_username: "touy_samash" },
   { id: 5, name: "ទុយ សុខលាភ", telegram_username: "touy_sokleap" },
   { id: 6, name: "ទ្រី សេរីវិជ្ជា", telegram_username: "try_sereyvichea" },
-  { id: 7, name: "ប៉ាន ជតពិសិដ្ឋ", telegram_username: "pan_chotpiseth" }, 
+  { id: 7, name: "ប៉ាន ជតពិសិដ្ឋ", telegram_username: "pan_chotpiseth" }, 
   { id: 8, name: "នាង អេនហ្គេល", telegram_username: "neang_engle" },
   { id: 9, name: "នុត ចំរើន", telegram_username: "nut_chamroeun" },
   { id: 10, name: "នូ ជាសំណាង", telegram_username: "nou_cheasamnang" },
@@ -66,10 +66,10 @@ const DUTY_PAIRS = [
   { pairId: 13, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[31], p2: STUDENT_LIST[32] },
   { pairId: 14, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[33], p2: STUDENT_LIST[34] },
   { pairId: 15, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[35], p2: STUDENT_LIST[36] },
-  { pairId: 16, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[37], p2: STUDENT_LIST[38] }, 
-  { pairId: 17, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[39], p2: STUDENT_LIST[40] }, 
-  { pairId: 18, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[1], p2: STUDENT_LIST[2] }, 
-  { pairId: 19, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[3], p2: STUDENT_LIST[4] }, 
+  { pairId: 16, dayName: "ថ្ងៃចន្ទ (Monday)", p1: STUDENT_LIST[37], p2: STUDENT_LIST[38] }, 
+  { pairId: 17, dayName: "ថ្ងៃអង្គារ (Tuesday)", p1: STUDENT_LIST[39], p2: STUDENT_LIST[40] }, 
+  { pairId: 18, dayName: "ថ្ងៃពុធ (Wednesday)", p1: STUDENT_LIST[1], p2: STUDENT_LIST[2] }, 
+  { pairId: 19, dayName: "ថ្ងៃព្រហស្បតិ៍ (Thursday)", p1: STUDENT_LIST[3], p2: STUDENT_LIST[4] }, 
   { pairId: 20, dayName: "ថ្ងៃសុក្រ (Friday)", p1: STUDENT_LIST[5], p2: STUDENT_LIST[6] }
 ];
 
@@ -164,36 +164,40 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [isWeekend]);
 
-useEffect(() => {
-  if (searchQuery.trim() === '') {
-    setFilteredStudents([]);
-  } else {
-    const query = searchQuery.toLowerCase();
-    
-    // ប្រើការត្រួតពិនិត្យសុវត្ថិភាព (Optional Chaining) ដើម្បីការពារ Error
-    const results = STUDENT_LIST.filter(student =>
-      student?.name?.toLowerCase().includes(query) ||
-      student?.id?.toString().includes(query) ||
-      (student?.telegram_username && student.telegram_username.toLowerCase().includes(query))
-    ).map(student => {
-      // ស្វែងរកគូដែលត្រូវនឹង ID របស់និស្សិត
-      const dutySchedule = DUTY_PAIRS.find(pair => 
-        pair?.p1?.id === student.id || pair?.p2?.id === student.id
-      );
-      
-      return {
-        ...student,
-        dutyDay: dutySchedule?.dayName || "គ្មានវេន",
-        partner: dutySchedule 
-          ? (dutySchedule.p1?.id === student.id ? dutySchedule.p2?.name : dutySchedule.p1?.name)
-          : "គ្មានដៃគូ",
-        pairId: dutySchedule?.pairId || null
-      };
-    });
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredStudents([]);
+    } else {
+      const query = searchQuery.toLowerCase();
+      
+      const results = STUDENT_LIST.filter(student =>
+        student.name.toLowerCase().includes(query) ||
+        student.id.toString().includes(query) ||
+        student.telegram_username.toLowerCase().includes(query)
+      ).map(student => {
+        const dutySchedule = DUTY_PAIRS.find(pair => pair.p1.id === student.id || pair.p2.id === student.id);
+        
+        let scheduleInfo = "មានឈ្មោះក្នុងប្រព័ន្ធ";
+        let partnerName = "គ្មានដៃគូ";
+        let currentPairId = null;
 
-    setFilteredStudents(results);
-  }
-}, [searchQuery, STUDENT_LIST]); // បន្ថែម STUDENT_LIST ជា dependency ដើម្បីសុវត្ថិភាព
+        if (dutySchedule) {
+          scheduleInfo = dutySchedule.dayName;
+          partnerName = dutySchedule.p1.id === student.id ? dutySchedule.p2.name : dutySchedule.p1.name;
+          currentPairId = dutySchedule.pairId;
+        }
+
+        return {
+          ...student,
+          dutyDay: scheduleInfo,
+          partner: partnerName,
+          pairId: currentPairId
+        };
+      });
+
+      setFilteredStudents(results);
+    }
+  }, [searchQuery]);
 
 const handleRequestSwap = async () => {
   if (!targetPairId || !swappingStudent) return;
@@ -203,20 +207,20 @@ const handleRequestSwap = async () => {
   if (!selectedPair) return;
 
   try {
-    const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
-    const CHAT_ID = "-1003502505377"; 
+    const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
+    const CHAT_ID = "-1003502505377"; 
 
     const message = `🔄 *សេចក្តីជូនដំណឹង៖ ការសុំប្តូរវេនគ្នា* 🔄\n\n📢 និស្សិតឈ្មោះ *${swappingStudent.name}* (@${swappingStudent.telegram_username}) ដែលត្រូវវេននៅថ្ងៃ *${swappingStudent.dutyDay}* មានធុរៈរវល់ ហើយបានស្នើសុំដូរវេនយកស្លាយមេរៀនជាមួយ៖\n\n🤝 *ក្រុមគោលដៅ:* \n១. ${selectedPair.p1.name}\n២. ${selectedPair.p2.name}\n(ត្រូវវេនធម្មតានៅ៖ *${selectedPair.dayName}*)\n\n👉 សូមក្រុមទាំងពីរទាក់ទងគ្នាដើម្បីសម្របសម្រួល និងទៅយកស្លាយជំនួសគ្នាផងបាទ!`;
 
     const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    
+    
     const response = await fetch(telegramUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        chat_id: CHAT_ID, 
-        text: message, 
-        parse_mode: 'Markdown' 
+      body: JSON.stringify({ 
+        chat_id: CHAT_ID, 
+        text: message, 
+        parse_mode: 'Markdown' 
       }),
     });
 
@@ -241,8 +245,8 @@ const handleRequestSwap = async () => {
   if (!todayDuty) return;
   setCheckInLoading(true);
   try {
-    const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
-    const CHAT_ID = "-1003502505377"; 
+    const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
+    const CHAT_ID = "-1003502505377"; 
 
     const message = `🔔 *ការបញ្ជាក់វត្តមានទៅយកស្លាយ* 🔔\n\n📅 *កាលបរិច្ឆេទ:* ${currentDateText || 'ថ្ងៃនេះ'}\n📢 គូមានវេនថ្ងៃនេះបានចុច *Check-in* ទៅយកស្លាយមេរៀនមកថ្នាក់រៀនហើយ!\n\n👤 *សមាជិកទី ០១:* ${todayDuty.p1.name}\n👤 *សមាជិកទី ០២:* ${todayDuty.p2.name}`;
 
@@ -287,7 +291,7 @@ const handleRequestSwap = async () => {
 
   return (
     <main className="min-h-screen bg-[#02040a] text-slate-100 flex flex-col antialiased">
-      
+      
       {/* NAVBAR */}
       <nav className="w-full border-b border-white/[0.08] bg-[#070a12]/80 backdrop-blur-md sticky top-0 z-40 px-6 py-3 flex justify-between items-center">
         <div className="flex items-center gap-3">
@@ -304,7 +308,7 @@ const handleRequestSwap = async () => {
 
       {/* BODY */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-xl mx-auto w-full space-y-5">
-        
+        
         <div className="w-full text-center">
           <p className="text-xs text-slate-400 font-medium font-mono">📅 {currentDateText}</p>
         </div>
@@ -319,7 +323,7 @@ const handleRequestSwap = async () => {
         <div className="w-full bg-[#0b0f19] border border-white/[0.06] rounded-2xl p-4 shadow-xl">
           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">🔎 ពិនិត្យមើលថ្ងៃត្រូវវេនរបស់អ្នក (ស្វែងរកឈ្មោះ)</label>
           <div className="relative">
-            <input 
+            <input 
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -350,7 +354,7 @@ const handleRequestSwap = async () => {
                         <span className="text-emerald-400 font-medium">{student.partner}</span>
                       </div>
                     </div>
-                    <button 
+                    <button 
                       onClick={() => {
                         setSwappingStudent(student);
                         setShowSwapModal(true);
@@ -382,7 +386,7 @@ const handleRequestSwap = async () => {
                 <h2 className="text-xs font-bold text-emerald-400 uppercase tracking-widest">📢 គូមានវេនទៅយកស្លាយថ្ងៃនេះ</h2>
                 <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20 font-bold">១ វេន ២ នាក់</span>
               </div>
-              
+              
               <div className="grid grid-cols-2 gap-3 mb-5">
                 <div className="p-3 bg-white/[0.02] rounded-xl border border-white/[0.04] text-center">
                   <p className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">សមាជិកទី ០១</p>
@@ -398,8 +402,8 @@ const handleRequestSwap = async () => {
                 onClick={handleCheckIn}
                 disabled={isCheckedIn || checkInLoading}
                 className={`w-full py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                  isCheckedIn 
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                  isCheckedIn 
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
                     : 'bg-emerald-500 hover:bg-emerald-600 text-slate-900 shadow-lg'
                 }`}
               >
@@ -432,11 +436,11 @@ const handleRequestSwap = async () => {
 
           <div className="space-y-2">
             {weeklySchedule.map((item, index) => (
-              <div 
-                key={index} 
+              <div 
+                key={index} 
                 className={`p-2.5 rounded-xl border flex justify-between items-center text-[11px] transition-all ${
                   !isWeekend && todayDuty?.pairId === item.pair.pairId
-                    ? 'bg-emerald-500/[0.04] border-emerald-500/30' 
+                    ? 'bg-emerald-500/[0.04] border-emerald-500/30' 
                     : 'bg-white/[0.01] border-white/[0.04]'
                 }`}
               >
@@ -465,9 +469,9 @@ const handleRequestSwap = async () => {
           <div className="bg-[#0b0f19] border border-white/10 rounded-2xl p-5 w-full max-w-sm text-xs shadow-2xl">
             <h3 className="text-sm font-bold text-white mb-2">🔄 ផ្ញើសារស្នើសុំដូរវេនគ្នា</h3>
             <p className="text-slate-400 mb-4">តើអ្នកចង់ស្នើសុំដូរវេនរបស់ <strong className="text-white">{swappingStudent.name}</strong> ជាមួយក្រុមណាខ្លះ?</p>
-            
+            
             <label className="block text-[10px] text-slate-400 mb-1 uppercase font-bold tracking-wider">សូមជ្រើសរើសក្រុមគោលដៅ៖</label>
-            <select 
+            <select 
               value={targetPairId}
               onChange={(e) => setTargetPairId(e.target.value)}
               className="w-full bg-[#030712] border border-white/10 rounded-xl p-3 text-white mb-5 focus:outline-none focus:border-blue-500/50"
@@ -482,7 +486,7 @@ const handleRequestSwap = async () => {
 
             <div className="flex gap-2">
               <button onClick={() => setShowSwapModal(false)} className="w-full bg-white/5 py-2.5 rounded-xl font-medium text-slate-300 hover:bg-white/10 transition-all">បោះបង់</button>
-              <button 
+              <button 
                 onClick={handleRequestSwap}
                 disabled={!targetPairId || swapLoading}
                 className="w-full bg-blue-500 disabled:bg-blue-800 disabled:text-slate-400 text-slate-950 py-2.5 rounded-xl font-bold hover:bg-blue-400 transition-all flex items-center justify-center"
@@ -522,4 +526,3 @@ const handleRequestSwap = async () => {
     </main>
   );
 }
-
