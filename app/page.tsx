@@ -95,6 +95,11 @@ export default function Home() {
   const [weeklySchedule, setWeeklySchedule] = useState<any[]>([]);
 
   useEffect(() => {
+    const lastCheckedDate = localStorage.getItem('lastCheckedDate');
+    const todayStr = new Date().toDateString();
+    if (lastCheckedDate === todayStr) {
+      setIsCheckedIn(true);
+    }
     const loadTimer = setTimeout(() => {
       setAppLoading(false);
       setShowWelcome(true);
@@ -237,28 +242,32 @@ const handleRequestSwap = async () => {
 };
 
   const handleCheckIn = async () => {
-    if (!todayDuty) return;
-    setCheckInLoading(true);
-    try {
-      const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
-      const CHAT_ID = "-1003502505377"; 
+  if (!todayDuty) return;
+  setCheckInLoading(true);
+  try {
+    const BOT_TOKEN = "8880912035:AAHZIZPcZCLpPhX8PxYuebTqGIigCXciyGY"; 
+    const CHAT_ID = "-1003502505377"; 
 
-      const message = `🔔 *ការបញ្ជាក់វត្តមានទៅយកស្លាយ* 🔔\n\n📅 *កាលបរិច្ឆេទ:* ${currentDateText || 'ថ្ងៃនេះ'}\n📢 គូមានវេនថ្ងៃនេះបានចុច *Check-in* ទៅយកស្លាយមេរៀនមកថ្នាក់រៀនហើយ!\n\n👤 *សមាជិកទី ០១:* ${todayDuty.p1.name}\n👤 *សមាជិកទី ០២:* ${todayDuty.p2.name}\n\nសូមសមាជិកក្នុងថ្នាក់រង់ចាំបន្តិចបាទ! 📚✨`;
+    const message = `🔔 *ការបញ្ជាក់វត្តមានទៅយកស្លាយ* 🔔\n\n📅 *កាលបរិច្ឆេទ:* ${currentDateText || 'ថ្ងៃនេះ'}\n📢 គូមានវេនថ្ងៃនេះបានចុច *Check-in* ទៅយកស្លាយមេរៀនមកថ្នាក់រៀនហើយ!\n\n👤 *សមាជិកទី ០១:* ${todayDuty.p1.name}\n👤 *សមាជិកទី ០២:* ${todayDuty.p2.name}`;
 
-      const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-      await fetch(telegramUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' }),
-      });
+    const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const response = await fetch(telegramUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' }),
+    });
+
+    if (response.ok) {
       setIsCheckedIn(true);
-    } catch (error) {
-      console.error(error);
-      setIsCheckedIn(true);
-    } finally {
-      setCheckInLoading(false);
+      // កូដនេះគឺសម្រាប់ចងចាំថាថ្ងៃនេះបាន Check-in រួចហើយ
+      localStorage.setItem('lastCheckedDate', new Date().toDateString());
     }
-  };
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setCheckInLoading(false);
+  }
+};
 
   if (appLoading) {
     return (
